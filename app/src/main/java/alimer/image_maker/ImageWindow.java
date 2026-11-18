@@ -24,6 +24,7 @@ public class ImageWindow
         drawLine(50,50,60,90,new Color(0,255,255));
         drawLine(50,50,10,90,new Color(255,0,0));
         drawLine(40,90,50,50,new Color(0,255,0));
+        drawSimpleTriangle(30,50,70,20,70,50,new Color(255,255,0));
         createWindow();
     }
 
@@ -161,21 +162,98 @@ public class ImageWindow
             {
                 if(i*i <= r*r - j*j)
                 {
-                    //NORMAL
                     raster.setPixel(minX + j, minY + i, colorArray);
-                    //X FLIPPED
                     raster.setPixel(minX - j, minY + i, colorArray);
-                    //Y FLIPPED
                     raster.setPixel(minX + j, minY - i, colorArray);
-                    //X & Y FLIPPED
                     raster.setPixel(minX - j, minY - i, colorArray);
                 }
             }
         }
     }
 
-    private void drawTriangle(int x1,int y1, int x2, int y2, int x3, int y3, Color color)
+
+    private void drawTriangle(int x1, int y1, int x2, int y2, int x3, int y3, Color color)
     {
+
+    }
+
+    private void drawSimpleTriangle(int x1,int y1, int x2, int y2, int x3, int y3, Color color)
+    {
+        WritableRaster raster = pureImage.getRaster();
+
+        int[] colorArray = {color.getRed(), color.getGreen(), color.getBlue()};
+
+        //Turning a down triangle to an up triangle.
+
+        int flip = 1;
+        if(y1 > y2)
+        {
+            flip = -1;
+            y2 = y2 + Math.abs(y1 - y2) * 2;
+        }
+
+        int deltaXA = x2 - x1;
+        int deltaYA = y2 - y1;
+
+        float gradientA = (float) deltaYA / deltaXA;
+        float constantA = y1 - gradientA * x1;
+
+
+        int deltaXB = x3 - x2;
+        int deltaYB = y3 - y2;
+
+        float gradientB = (float) deltaYB / deltaXB;
+        float constantB = y3 - gradientB * x3;
+
+
+        int minX = Math.min(x1,x2);
+        int minY = y1;
+
+
+        int width = Math.max(x2,x3) - Math.min(x1,x2) + 1;
+        int height = y2 - y1 + 1;
+
+        /*
         
+         Up         | Down      | Leaning Right | Leaning Left
+             2      | 1-------3 |             2 | 2
+            / \     |  \     /  |            /  |  \
+           /   \    |   \   /   |           /   |   \
+          /     \   |    \ /    |          /    |    \
+         1-------3  |     2     | 1-------3     |     1-------3
+
+        */
+
+        boolean leaningLeft = x1 > x2;
+        boolean leaningRight = x2 > x3;
+
+        for(int i = 0;i < height;i++)
+        {
+            for(int j = 0;j < width;j++)
+            {
+                //Checks if the point is above the first line.
+                if(minY + i > (minX+j)*gradientA + constantA)
+                {
+                    if(!leaningLeft) continue;
+
+                }
+                else
+                {
+                    if(leaningLeft) continue;
+                }
+
+                //Checks if the point is above the second line.
+                if(minY + i > (minX+j)*gradientB + constantB)
+                {
+                    if(!leaningRight) continue;
+                }
+                else
+                {
+                    if(leaningRight) continue;
+                }
+
+                raster.setPixel(minX + j, minY + i * flip, colorArray);
+            }
+        }
     }
 }
