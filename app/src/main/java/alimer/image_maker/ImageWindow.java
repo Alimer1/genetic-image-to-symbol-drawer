@@ -18,13 +18,13 @@ public class ImageWindow
     public ImageWindow()
     {
         createImage();
-        //drawRect(10, 10, 40, 40, new Color(60,224,68));
-        //drawCircle(70,50,15, new Color(91,56,22));
-        //drawLine(50,50,90,60,new Color(255,255,255));
-        //drawLine(50,50,60,90,new Color(0,255,255));
+        drawRect(10, 10, 40, 40, new Color(60,224,68));
+        drawCircle(70,50,15, new Color(91,56,22));
+        drawLine(50,50,90,60,new Color(255,255,255));
+        drawLine(50,50,60,90,new Color(0,255,255));
         drawLine(30,30,30,31,new Color(255,0,0));
         drawLine(20,20,21,20,new Color(0,255,0));
-        drawTriangle(10,10,10,10,10,10,new Color(255,0,0));
+        drawTriangle(10,10,40,80,90,30,new Color(255,0,0));
         createWindow();
     }
 
