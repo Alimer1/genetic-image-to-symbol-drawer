@@ -5,7 +5,7 @@ import java.util.List;
 public class Vector3D extends AbstractVector
 {
 
-    static final int SIZELIMIT = 3;
+    private static final int SIZELIMIT = 3;
 
     //------------//
     //Constructors//
@@ -17,6 +17,15 @@ public class Vector3D extends AbstractVector
     public Vector3D()
     {
         super(SIZELIMIT);
+    }
+
+    /**
+     * Creates the vector with the given default variable.
+     * @param def default
+     */
+    public Vector3D(double def)
+    {
+        super(SIZELIMIT,def);
     }
 
     /**
@@ -69,6 +78,12 @@ public class Vector3D extends AbstractVector
         set(2,vector.get(2));
     }
 
+
+    public double x()
+    {
+        return getX();
+    }
+
     public double getX()
     {
         return get(0);
@@ -79,6 +94,11 @@ public class Vector3D extends AbstractVector
         set(0,val);
     }
 
+    public double y()
+    {
+        return getY();
+    }
+
     public double getY()
     {
         return get(1);
@@ -87,6 +107,11 @@ public class Vector3D extends AbstractVector
     public void setY(double val)
     {
         set(1,val);
+    }
+
+    public double z()
+    {
+        return getZ();
     }
 
     public double getZ()

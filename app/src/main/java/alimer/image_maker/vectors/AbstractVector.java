@@ -19,8 +19,8 @@ abstract class AbstractVector
      */
     protected AbstractVector(int vectorLength)
     {
-        arrayList = new ArrayList<>(vectorLength);
-        replaceAll(0);
+        arrayList = new ArrayList<Double>(vectorLength);
+        populate(0, vectorLength);
     }
 
     /**
@@ -31,8 +31,8 @@ abstract class AbstractVector
      */
     protected AbstractVector(int vectorLength, double defaultNum)
     {
-        arrayList = new ArrayList<>(vectorLength);
-        replaceAll(defaultNum);
+        arrayList = new ArrayList<Double>(vectorLength);
+        populate(defaultNum, vectorLength);
     }
 
     /**
@@ -42,10 +42,10 @@ abstract class AbstractVector
      */
     protected AbstractVector(double[] array)
     {
-        arrayList = new ArrayList<>(array.length);
+        arrayList = new ArrayList<Double>(array.length);
         for(int i=0;i<array.length;i++)
         {
-            set(i,array[i]);
+            arrayList.add(i,array[i]);
         }
     }
 
@@ -62,11 +62,11 @@ abstract class AbstractVector
     /**
      * Creates a vector the same size and numbers as the Vector.
      *
-     * @param  list size of the vector
+     * @param  vector
      */
     protected AbstractVector(AbstractVector vector)
     {
-        arrayList = new ArrayList<>(vector.arrayList);
+        arrayList = new ArrayList<Double>(vector.arrayList);
     }
 
     //------------------//
@@ -77,12 +77,13 @@ abstract class AbstractVector
      * Replaces every number in the Vector with the given number.
      *
      * @param  num number
+     * @param  desiredSize size of the Vector
      */
-    private void replaceAll(double num)
+    private void populate(double num, int desiredSize)
     {
-        for(int i=0; i<arrayList.size(); i++)
+        for(int i=0; i<desiredSize; i++)
         {
-            arrayList.set(i,Double.valueOf(num));
+            arrayList.add(i,Double.valueOf(num));
         }
     }
 
@@ -118,6 +119,21 @@ abstract class AbstractVector
         arrayList.set(index,Double.valueOf(value));
     }
 
+    /**
+     * Returns the values in the vector as new array.
+     *
+     * @return vector in the form of an array
+     */
+    public double[] toArray()
+    {
+        double[] result = new double[size()];
+        for(int i =0;i<size();i++)
+        {
+            result[i] = get(i);
+        }
+        return result;
+    }
+
     //----------------//
     //Basic arithmetic//
     //----------------//
@@ -130,24 +146,21 @@ abstract class AbstractVector
      * Add the given value to each element of the Vector.
      *
      * @param  d value to be added
-     * @return Returns this instance of the Vector
      */
-    public AbstractVector add(double d)
+    public void add(double d)
     {
         for(int i = 0;i < this.size();i++)
         {
             this.set(i,get(i) + d);
         }
-        return this;
     }
 
     /**
      * Adds each element from the given Vector to this Vector.
      *
      * @param  v given Vector
-     * @return Returns this instance of the Vector
      */
-    public AbstractVector add(AbstractVector v)
+    public void add(AbstractVector v)
     {
         int maxLength = Math.max(size(), v.size());
 
@@ -155,24 +168,38 @@ abstract class AbstractVector
         {
             this.set(i, get(i) + v.get(i));
         }
+    }
 
-        return this;
+    //-----------//
+    //Subtraction//
+    //-----------//
+
+    /**
+     * Subtracts the given value to each element of the Vector.
+     *
+     * @param  d value to be subtracted
+     */
+    public void sub(double d)
+    {
+        for(int i = 0;i < this.size();i++)
+        {
+            this.set(i,get(i) - d);
+        }
     }
 
     /**
-     * Adds every value from the v0 to v1 and creates a new Vector for the result.
+     * Subtracts each element from the given Vector to this Vector.
      *
-     * @param  v0 first Vector of the addition
-     * @param  v1 second Vector of the addition
-     * @return Returns a new Vector as a result
+     * @param  v given Vector
      */
-    protected static AbstractVector add(AbstractVector v0, AbstractVector v1)
+    public void sub(AbstractVector v)
     {
-        int maxLength = Math.max(v0.size(), v1.size());
-        AbstractVector v2 = new VectorDynamic(maxLength,0);
-        v2.add(v0);
-        v2.add(v1);
-        return v2;
+        int maxLength = Math.max(size(), v.size());
+
+        for(int i = 0; i<maxLength; i++)
+        {
+            this.set(i, get(i) - v.get(i));
+        }
     }
 
     //--------------//
@@ -183,24 +210,21 @@ abstract class AbstractVector
      * Multiply the given value to each element of the Vector.
      *
      * @param  d value to be multiplied
-     * @return Returns this instance of the Vector
      */
-    public AbstractVector mult(double d)
+    public void mult(double d)
     {
         for(int i = 0;i < this.size();i++)
         {
             this.set(i,get(i) * d);
         }
-        return this;
     }
 
     /**
      * Multiplies each element from the given Vector to this Vector.
      *
      * @param  v given Vector
-     * @return Returns this instance of the Vector
      */
-    public AbstractVector mult(AbstractVector v)
+    public void mult(AbstractVector v)
     {
         int maxLength = Math.max(size(), v.size());
 
@@ -208,24 +232,6 @@ abstract class AbstractVector
         {
             this.set(i, get(i) * v.get(i));
         }
-
-        return this;
-    }
-
-    /**
-     * Multiplies every value from the v0 to v1 and creates a new Vector for the result.
-     *
-     * @param  v0 first Vector of the multiplication
-     * @param  v1 second Vector of the multiplication
-     * @return Returns a new Vector as a result
-     */
-    protected static AbstractVector mult(AbstractVector v0, AbstractVector v1)
-    {
-        int maxLength = Math.max(v0.size(), v1.size());
-        AbstractVector v2 = new VectorDynamic(maxLength,1);
-        v2.mult(v0);
-        v2.mult(v1);
-        return v2;
     }
 
     //-----//
@@ -244,6 +250,30 @@ abstract class AbstractVector
             total =+ get(i);
         }
         return total;
+    }
+
+    /**
+     * Converts each value to either +1 or -1 (0 will count as positive)
+     * 
+     */
+    public void toSignBinary()
+    {
+        for(int i=0;i<size();i++)
+        {
+            set(i,get(i) > 0 ? 1 : -1);
+        }
+    }
+
+    /**
+     * Flips the sign of every value.
+     * 
+     */
+    public void flipSign()
+    {
+        for(int i=0;i<size();i++)
+        {
+            set(i,get(i) * -1);
+        }
     }
 
 }

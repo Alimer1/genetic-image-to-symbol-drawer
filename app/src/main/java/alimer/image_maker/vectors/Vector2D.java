@@ -5,7 +5,7 @@ import java.util.List;
 public class Vector2D extends AbstractVector
 {
 
-    static final int SIZELIMIT = 2;
+    private static final int SIZELIMIT = 2;
 
     //------------//
     //Constructors//
@@ -17,6 +17,15 @@ public class Vector2D extends AbstractVector
     public Vector2D()
     {
         super(SIZELIMIT);
+    }
+
+    /**
+     * Creates the vector with the given default variable.
+     * @param def default
+     */
+    public Vector2D(double def)
+    {
+        super(SIZELIMIT,def);
     }
 
     /**
@@ -65,6 +74,11 @@ public class Vector2D extends AbstractVector
     }
 
 
+    public double x()
+    {
+        return getX();
+    }
+
     public double getX()
     {
         return get(0);
@@ -73,6 +87,11 @@ public class Vector2D extends AbstractVector
     public void setX(double val)
     {
         set(0,val);
+    }
+
+    public double y()
+    {
+        return getY();
     }
 
     public double getY()
@@ -85,4 +104,13 @@ public class Vector2D extends AbstractVector
         set(1,val);
     }
 
+    /**
+     * Swaps the x and y values.
+     */
+    public void swap()
+    {
+        double temp = x();
+        setX(y());
+        setY(temp);
+    }
 }
